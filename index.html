@@ -600,6 +600,74 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
 #sec-10-70 .check-card.status-nok,
 #sec-10-80 .check-card.status-nok { background:#FEE2E2 !important; border-left-color:#DC2626 !important; }
 
+
+/* ── SIGNATURE UPLOAD MOBILE ── */
+.sig-upload-wrap {
+  width: 100%;
+}
+.sig-upload-input { display: none; }
+.sig-upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 44px;
+  border: 1.5px dashed #BBBBBB;
+  border-radius: 8px;
+  background: #FAFAFA;
+  cursor: pointer;
+  padding: 8px 10px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.sig-upload-label:hover { border-color: #0D2137; background: #EEF2FF; }
+.sig-upload-icon { font-size: 18px; }
+.sig-upload-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #888;
+}
+.sig-preview {
+  display: none;
+  position: relative;
+  width: 100%;
+  margin-top: 6px;
+}
+.sig-preview img {
+  width: 100%;
+  max-height: 60px;
+  object-fit: contain;
+  border-radius: 6px;
+  border: 1px solid #DDD;
+  background: #fff;
+}
+.sig-pdf-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #0D2137;
+  background: #E0E7FF;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #A5B4FC;
+  word-break: break-all;
+  display: block;
+}
+.sig-clear-btn {
+  position: absolute;
+  top: -6px; right: -6px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #DC2626;
+  color: #fff;
+  font-size: 11px;
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  touch-action: manipulation;
+}
+.sig-upload-wrap.has-file .sig-upload-label { display: none; }
+.sig-upload-wrap.has-file .sig-preview { display: block; }
+
 </style>
 </head>
 <body>
@@ -683,7 +751,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap0">
+            <label class="sig-upload-label" for="sigFile0">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile0" accept="image/*,.pdf" onchange="handleSigUpload(this,0)"/>
+            <div class="sig-preview" id="sigPreview0">
+              <button class="sig-clear-btn" onclick="clearSig(0)">✕</button>
+              <img id="sigImg0" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf0" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div>
         </div>
       </div>
@@ -700,7 +781,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap1">
+            <label class="sig-upload-label" for="sigFile1">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile1" accept="image/*,.pdf" onchange="handleSigUpload(this,1)"/>
+            <div class="sig-preview" id="sigPreview1">
+              <button class="sig-clear-btn" onclick="clearSig(1)">✕</button>
+              <img id="sigImg1" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf1" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div>
         </div>
       </div>
@@ -717,7 +811,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap2">
+            <label class="sig-upload-label" for="sigFile2">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile2" accept="image/*,.pdf" onchange="handleSigUpload(this,2)"/>
+            <div class="sig-preview" id="sigPreview2">
+              <button class="sig-clear-btn" onclick="clearSig(2)">✕</button>
+              <img id="sigImg2" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf2" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div>
         </div>
       </div>
@@ -747,7 +854,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap3">
+            <label class="sig-upload-label" for="sigFile3">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile3" accept="image/*,.pdf" onchange="handleSigUpload(this,3)"/>
+            <div class="sig-preview" id="sigPreview3">
+              <button class="sig-clear-btn" onclick="clearSig(3)">✕</button>
+              <img id="sigImg3" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf3" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="401-074-MB"/></div>
         </div>
       </div>
@@ -767,7 +887,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap4">
+            <label class="sig-upload-label" for="sigFile4">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile4" accept="image/*,.pdf" onchange="handleSigUpload(this,4)"/>
+            <div class="sig-preview" id="sigPreview4">
+              <button class="sig-clear-btn" onclick="clearSig(4)">✕</button>
+              <img id="sigImg4" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf4" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="401-074-MB"/></div>
         </div>
       </div>
@@ -784,7 +917,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap5">
+            <label class="sig-upload-label" for="sigFile5">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile5" accept="image/*,.pdf" onchange="handleSigUpload(this,5)"/>
+            <div class="sig-preview" id="sigPreview5">
+              <button class="sig-clear-btn" onclick="clearSig(5)">✕</button>
+              <img id="sigImg5" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf5" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div>
         </div>
       </div>
@@ -801,7 +947,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap6">
+            <label class="sig-upload-label" for="sigFile6">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile6" accept="image/*,.pdf" onchange="handleSigUpload(this,6)"/>
+            <div class="sig-preview" id="sigPreview6">
+              <button class="sig-clear-btn" onclick="clearSig(6)">✕</button>
+              <img id="sigImg6" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf6" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="WI#010 OP#10-20"/></div>
         </div>
       </div>
@@ -821,25 +980,77 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
         <span class="check-op">10-30</span>
         <div class="check-text">Ensure CNC program No. <strong>H4W FM</strong> is loaded in the CNC Machine</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(7,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(7,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(7,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="H4W FM"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap7">
+            <label class="sig-upload-label" for="sigFile7">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile7" accept="image/*,.pdf" onchange="handleSigUpload(this,7)"/>
+            <div class="sig-preview" id="sigPreview7">
+              <button class="sig-clear-btn" onclick="clearSig(7)">✕</button>
+              <img id="sigImg7" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf7" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="H4W FM"/></div></div>
       </div>
       <div class="check-card" id="check-8">
         <span class="check-op">10-30</span>
         <div class="check-text">Check for Wrinkles or folds in the foam before laying on the machines</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(8,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(8,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(8,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap8">
+            <label class="sig-upload-label" for="sigFile8">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile8" accept="image/*,.pdf" onchange="handleSigUpload(this,8)"/>
+            <div class="sig-preview" id="sigPreview8">
+              <button class="sig-clear-btn" onclick="clearSig(8)">✕</button>
+              <img id="sigImg8" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf8" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
       </div>
       <div class="check-card" id="check-9">
         <span class="check-op">10-30</span>
         <div class="check-text">Check for damage in the foam before laying on the machines</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(9,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(9,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(9,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap9">
+            <label class="sig-upload-label" for="sigFile9">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile9" accept="image/*,.pdf" onchange="handleSigUpload(this,9)"/>
+            <div class="sig-preview" id="sigPreview9">
+              <button class="sig-clear-btn" onclick="clearSig(9)">✕</button>
+              <img id="sigImg9" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf9" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
       </div>
       <div class="check-card" id="check-10">
         <span class="check-op">10-30</span>
         <div class="check-text">Check the size of foam as per Foam Drawing <span class="ref">DDR-401-189-FWC</span></div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(10,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(10,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(10,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189-FWC"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap10">
+            <label class="sig-upload-label" for="sigFile10">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile10" accept="image/*,.pdf" onchange="handleSigUpload(this,10)"/>
+            <div class="sig-preview" id="sigPreview10">
+              <button class="sig-clear-btn" onclick="clearSig(10)">✕</button>
+              <img id="sigImg10" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf10" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189-FWC"/></div></div>
       </div>
     </div>
   </div>
@@ -857,25 +1068,77 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
         <span class="check-op">10-40</span>
         <div class="check-text">Ensure correct CNC program No. <strong>H4W K120, H4W G50, H4W G300 &amp; H4W C200</strong> is loaded in the TC Machine <span class="ref">(Check prog. No. in route card)</span></div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(11,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(11,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(11,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="Route Card"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap11">
+            <label class="sig-upload-label" for="sigFile11">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile11" accept="image/*,.pdf" onchange="handleSigUpload(this,11)"/>
+            <div class="sig-preview" id="sigPreview11">
+              <button class="sig-clear-btn" onclick="clearSig(11)">✕</button>
+              <img id="sigImg11" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf11" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="Route Card"/></div></div>
       </div>
       <div class="check-card" id="check-12">
         <span class="check-op">10-40</span>
         <div class="check-text">Ensure prepreg is free of wrinkles and folds after applying bed vacuum</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(12,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(12,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(12,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap12">
+            <label class="sig-upload-label" for="sigFile12">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile12" accept="image/*,.pdf" onchange="handleSigUpload(this,12)"/>
+            <div class="sig-preview" id="sigPreview12">
+              <button class="sig-clear-btn" onclick="clearSig(12)">✕</button>
+              <img id="sigImg12" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf12" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
       </div>
       <div class="check-card" id="check-13">
         <span class="check-op">10-40</span>
         <div class="check-text">Check for damage in the prepreg after laying on the machine bed</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(13,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(13,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(13,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap13">
+            <label class="sig-upload-label" for="sigFile13">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile13" accept="image/*,.pdf" onchange="handleSigUpload(this,13)"/>
+            <div class="sig-preview" id="sigPreview13">
+              <button class="sig-clear-btn" onclick="clearSig(13)">✕</button>
+              <img id="sigImg13" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf13" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
       </div>
       <div class="check-card" id="check-14">
         <span class="check-op">10-40</span>
         <div class="check-text">Check the size of cut prepreg matches with ref template <span class="ref">(One sample per program)</span></div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(14,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(14,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(14,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Template Ref"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap14">
+            <label class="sig-upload-label" for="sigFile14">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile14" accept="image/*,.pdf" onchange="handleSigUpload(this,14)"/>
+            <div class="sig-preview" id="sigPreview14">
+              <button class="sig-clear-btn" onclick="clearSig(14)">✕</button>
+              <img id="sigImg14" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf14" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Template Ref"/></div></div>
       </div>
     </div>
   </div>
@@ -893,7 +1156,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
         <span class="check-op">10-50</span>
         <div class="check-text">Ensure <strong>Layup Drawing DDR-401-189 Rev 0.2</strong> is used</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(15,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(15,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(15,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap15">
+            <label class="sig-upload-label" for="sigFile15">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile15" accept="image/*,.pdf" onchange="handleSigUpload(this,15)"/>
+            <div class="sig-preview" id="sigPreview15">
+              <button class="sig-clear-btn" onclick="clearSig(15)">✕</button>
+              <img id="sigImg15" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf15" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div></div>
       </div>
       <div class="check-card" id="check-16">
         <span class="check-op">10-50</span>
@@ -907,7 +1183,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap16">
+            <label class="sig-upload-label" for="sigFile16">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile16" accept="image/*,.pdf" onchange="handleSigUpload(this,16)"/>
+            <div class="sig-preview" id="sigPreview16">
+              <button class="sig-clear-btn" onclick="clearSig(16)">✕</button>
+              <img id="sigImg16" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf16" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
         </div>
       </div>
@@ -923,7 +1212,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap17">
+            <label class="sig-upload-label" for="sigFile17">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile17" accept="image/*,.pdf" onchange="handleSigUpload(this,17)"/>
+            <div class="sig-preview" id="sigPreview17">
+              <button class="sig-clear-btn" onclick="clearSig(17)">✕</button>
+              <img id="sigImg17" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf17" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
         </div>
       </div>
@@ -939,7 +1241,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap18">
+            <label class="sig-upload-label" for="sigFile18">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile18" accept="image/*,.pdf" onchange="handleSigUpload(this,18)"/>
+            <div class="sig-preview" id="sigPreview18">
+              <button class="sig-clear-btn" onclick="clearSig(18)">✕</button>
+              <img id="sigImg18" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf18" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
         </div>
       </div>
@@ -955,7 +1270,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap19">
+            <label class="sig-upload-label" for="sigFile19">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile19" accept="image/*,.pdf" onchange="handleSigUpload(this,19)"/>
+            <div class="sig-preview" id="sigPreview19">
+              <button class="sig-clear-btn" onclick="clearSig(19)">✕</button>
+              <img id="sigImg19" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf19" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
         </div>
       </div>
@@ -971,7 +1299,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap20">
+            <label class="sig-upload-label" for="sigFile20">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile20" accept="image/*,.pdf" onchange="handleSigUpload(this,20)"/>
+            <div class="sig-preview" id="sigPreview20">
+              <button class="sig-clear-btn" onclick="clearSig(20)">✕</button>
+              <img id="sigImg20" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf20" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
         </div>
       </div>
@@ -987,7 +1328,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap21">
+            <label class="sig-upload-label" for="sigFile21">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile21" accept="image/*,.pdf" onchange="handleSigUpload(this,21)"/>
+            <div class="sig-preview" id="sigPreview21">
+              <button class="sig-clear-btn" onclick="clearSig(21)">✕</button>
+              <img id="sigImg21" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf21" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
         </div>
       </div>
@@ -1003,7 +1357,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap22">
+            <label class="sig-upload-label" for="sigFile22">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile22" accept="image/*,.pdf" onchange="handleSigUpload(this,22)"/>
+            <div class="sig-preview" id="sigPreview22">
+              <button class="sig-clear-btn" onclick="clearSig(22)">✕</button>
+              <img id="sigImg22" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf22" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
         </div>
       </div>
@@ -1019,7 +1386,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
-          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap23">
+            <label class="sig-upload-label" for="sigFile23">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile23" accept="image/*,.pdf" onchange="handleSigUpload(this,23)"/>
+            <div class="sig-preview" id="sigPreview23">
+              <button class="sig-clear-btn" onclick="clearSig(23)">✕</button>
+              <img id="sigImg23" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf23" style="display:none"></span>
+            </div>
+          </div>
+        </div>
           <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
         </div>
       </div>
@@ -1028,19 +1408,58 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
         <span class="check-op">10-50</span>
         <div class="check-text">Butt line must be as per the Layup Drawing <span class="ref">DDR-401-189 Rev 0.2</span></div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(24,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(24,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(24,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap24">
+            <label class="sig-upload-label" for="sigFile24">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile24" accept="image/*,.pdf" onchange="handleSigUpload(this,24)"/>
+            <div class="sig-preview" id="sigPreview24">
+              <button class="sig-clear-btn" onclick="clearSig(24)">✕</button>
+              <img id="sigImg24" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf24" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div></div>
       </div>
       <div class="check-card" id="check-25">
         <span class="check-op">10-50</span>
         <div class="check-text">Ensure the fabrics are properly pressed and no fold or wrinkles are found</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(25,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(25,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(25,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap25">
+            <label class="sig-upload-label" for="sigFile25">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile25" accept="image/*,.pdf" onchange="handleSigUpload(this,25)"/>
+            <div class="sig-preview" id="sigPreview25">
+              <button class="sig-clear-btn" onclick="clearSig(25)">✕</button>
+              <img id="sigImg25" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf25" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
       </div>
       <div class="check-card" id="check-26">
         <span class="check-op">10-50</span>
         <div class="check-text">Check size of fabric is not extending beyond MEOP line</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(26,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(26,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(26,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap26">
+            <label class="sig-upload-label" for="sigFile26">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile26" accept="image/*,.pdf" onchange="handleSigUpload(this,26)"/>
+            <div class="sig-preview" id="sigPreview26">
+              <button class="sig-clear-btn" onclick="clearSig(26)">✕</button>
+              <img id="sigImg26" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf26" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
       </div>
     </div>
   </div>
@@ -1058,19 +1477,58 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
         <span class="check-op">10-60</span>
         <div class="check-text">Ensure Perforated / Non-Perforated Release film is applied on the parts</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(27,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(27,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(27,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap27">
+            <label class="sig-upload-label" for="sigFile27">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile27" accept="image/*,.pdf" onchange="handleSigUpload(this,27)"/>
+            <div class="sig-preview" id="sigPreview27">
+              <button class="sig-clear-btn" onclick="clearSig(27)">✕</button>
+              <img id="sigImg27" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf27" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
       </div>
       <div class="check-card" id="check-28">
         <span class="check-op">10-60</span>
         <div class="check-text">Ensure the Breather material is applied on parts</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(28,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(28,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(28,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap28">
+            <label class="sig-upload-label" for="sigFile28">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile28" accept="image/*,.pdf" onchange="handleSigUpload(this,28)"/>
+            <div class="sig-preview" id="sigPreview28">
+              <button class="sig-clear-btn" onclick="clearSig(28)">✕</button>
+              <img id="sigImg28" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf28" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
       </div>
       <div class="check-card" id="check-29">
         <span class="check-op">10-60</span>
         <div class="check-text">Ensure the vacuum bagging film is applied on the parts</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(29,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(29,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(29,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap29">
+            <label class="sig-upload-label" for="sigFile29">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile29" accept="image/*,.pdf" onchange="handleSigUpload(this,29)"/>
+            <div class="sig-preview" id="sigPreview29">
+              <button class="sig-clear-btn" onclick="clearSig(29)">✕</button>
+              <img id="sigImg29" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf29" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
       </div>
       <div class="check-card" id="check-30">
         <span class="check-op">10-60</span>
@@ -1082,7 +1540,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
         </div>
         <div class="warn-box">⚠ Max allowed vacuum drop: <strong>37.5 mmHG</strong> for 10 minutes</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(30,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(30,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(30,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap30">
+            <label class="sig-upload-label" for="sigFile30">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile30" accept="image/*,.pdf" onchange="handleSigUpload(this,30)"/>
+            <div class="sig-preview" id="sigPreview30">
+              <button class="sig-clear-btn" onclick="clearSig(30)">✕</button>
+              <img id="sigImg30" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf30" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
       </div>
     </div>
   </div>
@@ -1105,7 +1576,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
           <div class="measure-row"><span>Temp Avg / Hour:</span><input type="number" class="m-inp" id="tempAvg" placeholder="—"/><span class="unit">°C</span></div>
         </div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(31,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(31,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(31,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap31">
+            <label class="sig-upload-label" for="sigFile31">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile31" accept="image/*,.pdf" onchange="handleSigUpload(this,31)"/>
+            <div class="sig-preview" id="sigPreview31">
+              <button class="sig-clear-btn" onclick="clearSig(31)">✕</button>
+              <img id="sigImg31" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf31" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
       </div>
     </div>
   </div>
@@ -1123,7 +1607,20 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
         <span class="check-op">10-80</span>
         <div class="check-text">Check technician is taking care while demoulding</div>
         <div class="remark-row"><button class="rem-btn" onclick="setRemark(32,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(32,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(32,'NA',this)">— N/A</button></div>
-        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span>
+          <div class="sig-upload-wrap" id="sigWrap32">
+            <label class="sig-upload-label" for="sigFile32">
+              <span class="sig-upload-icon">📎</span>
+              <span class="sig-upload-text">Upload Photo / PDF</span>
+            </label>
+            <input class="sig-upload-input" type="file" id="sigFile32" accept="image/*,.pdf" onchange="handleSigUpload(this,32)"/>
+            <div class="sig-preview" id="sigPreview32">
+              <button class="sig-clear-btn" onclick="clearSig(32)">✕</button>
+              <img id="sigImg32" src="" alt="" style="display:none"/>
+              <span class="sig-pdf-name" id="sigPdf32" style="display:none"></span>
+            </div>
+          </div>
+        </div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
       </div>
     </div>
   </div>
@@ -1135,7 +1632,18 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
       <div class="appr-block">
         <div class="appr-block-title">Prepared By</div>
         <div class="appr-block-fields">
-          <div class="sig-pad">✍ Signature Area</div>
+          <div class="sig-upload-wrap" id="sigWrap500" style="margin-bottom:14px;">
+        <label class="sig-upload-label" for="sigFile500" style="min-height:60px;flex-direction:column;gap:4px;">
+          <span class="sig-upload-icon">✍️</span>
+          <span class="sig-upload-text">Upload Signature / Photo / PDF</span>
+        </label>
+        <input class="sig-upload-input" type="file" id="sigFile500" accept="image/*,.pdf" onchange="handleSigUpload(this,500)"/>
+        <div class="sig-preview" id="sigPreview500">
+          <button class="sig-clear-btn" onclick="clearSig(500)" title="Remove">✕</button>
+          <img id="sigImg500" src="" alt="Signature" style="display:none;max-height:60px;"/>
+          <span class="sig-pdf-name" id="sigPdf500" style="display:none"></span>
+        </div>
+      </div>
           <div class="detail-field"><span class="d-label">Name</span><input type="text" class="d-input" placeholder="Full Name"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Designation</span><input type="text" class="d-input" placeholder="Designation"/></div>
@@ -1144,7 +1652,18 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
       <div class="appr-block">
         <div class="appr-block-title">Reviewed By</div>
         <div class="appr-block-fields">
-          <div class="sig-pad">✍ Signature Area</div>
+          <div class="sig-upload-wrap" id="sigWrap501" style="margin-bottom:14px;">
+        <label class="sig-upload-label" for="sigFile501" style="min-height:60px;flex-direction:column;gap:4px;">
+          <span class="sig-upload-icon">✍️</span>
+          <span class="sig-upload-text">Upload Signature / Photo / PDF</span>
+        </label>
+        <input class="sig-upload-input" type="file" id="sigFile501" accept="image/*,.pdf" onchange="handleSigUpload(this,501)"/>
+        <div class="sig-preview" id="sigPreview501">
+          <button class="sig-clear-btn" onclick="clearSig(501)" title="Remove">✕</button>
+          <img id="sigImg501" src="" alt="Signature" style="display:none;max-height:60px;"/>
+          <span class="sig-pdf-name" id="sigPdf501" style="display:none"></span>
+        </div>
+      </div>
           <div class="detail-field"><span class="d-label">Name</span><input type="text" class="d-input" placeholder="Full Name"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Designation</span><input type="text" class="d-input" placeholder="Designation"/></div>
@@ -1153,7 +1672,18 @@ tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):n
       <div class="appr-block">
         <div class="appr-block-title">Approved By</div>
         <div class="appr-block-fields">
-          <div class="sig-pad">✍ Signature Area</div>
+          <div class="sig-upload-wrap" id="sigWrap502" style="margin-bottom:14px;">
+        <label class="sig-upload-label" for="sigFile502" style="min-height:60px;flex-direction:column;gap:4px;">
+          <span class="sig-upload-icon">✍️</span>
+          <span class="sig-upload-text">Upload Signature / Photo / PDF</span>
+        </label>
+        <input class="sig-upload-input" type="file" id="sigFile502" accept="image/*,.pdf" onchange="handleSigUpload(this,502)"/>
+        <div class="sig-preview" id="sigPreview502">
+          <button class="sig-clear-btn" onclick="clearSig(502)" title="Remove">✕</button>
+          <img id="sigImg502" src="" alt="Signature" style="display:none;max-height:60px;"/>
+          <span class="sig-pdf-name" id="sigPdf502" style="display:none"></span>
+        </div>
+      </div>
           <div class="detail-field"><span class="d-label">Name</span><input type="text" class="d-input" placeholder="Full Name"/></div>
           <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
           <div class="detail-field"><span class="d-label">Designation</span><input type="text" class="d-input" placeholder="Designation"/></div>
@@ -1358,6 +1888,33 @@ document.getElementById('vacActual')?.addEventListener('input', function() {
     this.style.color = '';
   }
 });
+
+
+function handleSigUpload(input, idx) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const wrap = document.getElementById('sigWrap'+idx);
+  const img  = document.getElementById('sigImg'+idx);
+  const pdf  = document.getElementById('sigPdf'+idx);
+  wrap.classList.add('has-file');
+  if (file.type === 'application/pdf') {
+    img.style.display = 'none';
+    pdf.style.display = 'block';
+    pdf.textContent = '📄 ' + file.name;
+  } else {
+    const reader = new FileReader();
+    reader.onload = e => { img.src = e.target.result; img.style.display = 'block'; pdf.style.display = 'none'; };
+    reader.readAsDataURL(file);
+  }
+}
+function clearSig(idx) {
+  const wrap = document.getElementById('sigWrap'+idx);
+  const input = document.getElementById('sigFile'+idx);
+  const img = document.getElementById('sigImg'+idx);
+  const pdf = document.getElementById('sigPdf'+idx);
+  wrap.classList.remove('has-file');
+  input.value = ''; img.src = ''; img.style.display='none'; pdf.style.display='none'; pdf.textContent='';
+}
 
 // ── INIT ───────────────────────────────────────
 updateProgress();
