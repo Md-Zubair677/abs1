@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<title>ACPL Inspection</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   ACPL Mobile Inspection App
+   Mobile-first · Card-based · Touch-optimized
+   ═══════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+
+:root{
+  --navy:    #0D2137;
+  --navy2:   #162d4a;
+  --cyan:    #00B4D8;
+  --cyan2:   #0096c7;
+  --white:   #FFFFFF;
+  --bg:      #F2F4F8;
+  --card:    #FFFFFF;
+  --border:  #E2E6ED;
+  --text:    #1A1D23;
+  --text2:   #5A6070;
+  --text3:   #9AA0AE;
+  --ok:      #16A34A;
+  --ok-bg:   #DCFCE7;
+  --nok:     #DC2626;
+  --nok-bg:  #FEE2E2;
+  --na-bg:   #F1F5F9;
+  --shadow:  0 2px 12px rgba(13,33,55,0.10);
+  --shadow2: 0 8px 32px rgba(13,33,55,0.16);
+  --r:       14px;
+  --r2:      10px;
+  --font:    'Outfit', sans-serif;
+  --mono:    'JetBrains Mono', monospace;
+}
+
+html{height:100%;overflow-x:hidden;}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  padding-bottom:90px;
+  overflow-x:hidden;
+}
+
+/* ── TOP APP BAR ── */
+.app-bar{
+  position:sticky;top:0;z-index:200;
+  background:var(--navy);
+  padding:0 16px;
+  display:flex;align-items:center;gap:12px;
+  height:64px;
+  box-shadow:0 2px 16px rgba(0,0,0,0.25);
+}
+
+.app-bar-logo{
+  width:40px;height:40px;
+  border-radius:10px;
+  overflow:hidden;
+  background:#fff;
+  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.app-bar-logo img{width:36px;height:36px;object-fit:contain;}
+
+.app-bar-titles{flex:1;min-width:0;}
+.app-bar-title{
+  font-size:20px;font-weight:700;
+  color:#fff;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  letter-spacing:0.01em;
+}
+.app-bar-sub{
+  font-size:12.5px;font-weight:400;
+  color:rgba(255,255,255,0.55);
+  letter-spacing:0.08em;text-transform:uppercase;
+  margin-top:1px;
+}
+
+.app-bar-doc{
+  flex-shrink:0;
+  background:rgba(255,255,255,0.1);
+  border-radius:8px;
+  padding:5px 10px;
+  text-align:right;
+}
+.app-bar-doc span{display:block;font-family:var(--mono);font-size:11.2px;color:rgba(255,255,255,0.6);}
+.app-bar-doc strong{display:block;font-family:var(--mono);font-size:12.5px;color:var(--cyan);font-weight:600;}
+
+/* ── PROGRESS STRIP ── */
+.progress-strip{
+  background:var(--navy);
+  padding:0 16px 14px;
+}
+.prog-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.prog-label{font-size:13.8px;color:rgba(255,255,255,0.6);letter-spacing:0.05em;}
+.prog-pct{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--cyan);}
+.prog-bar{height:5px;background:rgba(255,255,255,0.12);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--cyan),#48cae4);border-radius:3px;transition:width 0.5s cubic-bezier(0.4,0,0.2,1);}
+.prog-chips{display:flex;gap:8px;margin-top:10px;}
+.prog-chip{
+  flex:1;background:rgba(255,255,255,0.07);
+  border-radius:8px;padding:7px 6px;text-align:center;
+}
+.prog-chip-num{font-family:var(--mono);font-size:20px;font-weight:700;color:#fff;}
+.prog-chip-lbl{font-size:11.2px;color:rgba(255,255,255,0.45);letter-spacing:0.06em;margin-top:1px;}
+.prog-chip.chip-ok .prog-chip-num{color:#4ade80;}
+.prog-chip.chip-nok .prog-chip-num{color:#f87171;}
+.prog-chip.chip-pending .prog-chip-num{color:rgba(255,255,255,0.6);}
+
+/* ── FORM INFO CARD ── */
+.section-wrap{padding:14px 14px 0;}
+
+.info-card{
+  background:var(--card);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  margin-bottom:14px;
+}
+.info-card-header{
+  background:var(--navy);
+  padding:12px 16px;
+  display:flex;align-items:center;gap:10px;
+}
+.info-card-header h2{
+  font-size:16.2px;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;
+  color:#fff;
+}
+.info-fields{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.info-field{display:flex;flex-direction:column;gap:4px;}
+.info-field.full{grid-column:1/-1;}
+.i-label{
+  font-size:11.9px;font-weight:600;
+  letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--text3);
+}
+.i-input{
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  padding:9px 11px;
+  font-family:var(--mono);
+  font-size:15px;
+  color:var(--text);
+  outline:none;
+  transition:border-color 0.15s,box-shadow 0.15s;
+  width:100%;
+}
+.i-input:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(13,33,55,0.1);}
+.i-input::placeholder{color:var(--text3);}
+
+/* ── SECTION ACCORDION ── */
+.section-card{
+  background:var(--card);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  margin-bottom:14px;
+  overflow:hidden;
+}
+
+.section-header{
+  background:var(--navy);
+  padding:14px 16px;
+  display:flex;align-items:center;gap:10px;
+  cursor:pointer;
+  user-select:none;
+  -webkit-user-select:none;
+  position:relative;
+}
+.section-header:active{background:var(--navy2);}
+
+.section-emoji{font-size:25px;flex-shrink:0;}
+.section-title{
+  flex:1;
+  font-size:17.5px;font-weight:700;
+  letter-spacing:0.04em;
+  color:#fff;
+  text-transform:uppercase;
+}
+.section-badge{
+  background:rgba(255,255,255,0.12);
+  border-radius:20px;
+  padding:3px 10px;
+  font-family:var(--mono);
+  font-size:13.8px;
+  color:rgba(255,255,255,0.7);
+  flex-shrink:0;
+}
+.section-badge.all-done{background:rgba(74,222,128,0.2);color:#4ade80;}
+
+.section-chevron{
+  width:22px;height:22px;
+  display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,0.5);
+  transition:transform 0.25s ease;
+  flex-shrink:0;
+}
+.section-card.open .section-chevron{transform:rotate(180deg);}
+
+.section-body{
+  display:none;
+  padding:12px;
+  display:flex;flex-direction:column;gap:10px;
+}
+.section-card:not(.open) .section-body{display:none;}
+.section-card.open .section-body{display:flex;}
+
+/* ── CHECK CARD ── */
+.check-card{
+  border:1.5px solid var(--border);
+  border-radius:var(--r2);
+  padding:12px;
+  background:#fff;
+  transition:border-color 0.2s,box-shadow 0.2s;
+  animation:slideIn 0.2s ease both;
+}
+
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(6px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.check-card.status-ok{border-color:#16A34A;box-shadow:0 2px 8px rgba(22,163,74,0.12);}
+.check-card.status-nok{border-color:#DC2626;box-shadow:0 2px 8px rgba(220,38,38,0.12);}
+.check-card.status-na{border-color:#CBD5E1;}
+
+.check-op{
+  font-family:var(--mono);font-size:12.5px;font-weight:600;
+  color:var(--navy);
+  letter-spacing:0.08em;
+  margin-bottom:5px;
+  display:inline-block;
+  background:rgba(13,33,55,0.07);
+  padding:2px 8px;border-radius:4px;
+}
+.check-text{
+  font-size:16.2px;line-height:1.55;
+  color:var(--text);
+  margin-bottom:10px;
+  font-weight:400;
+}
+.check-text strong{font-weight:700;color:var(--navy);}
+.check-text .ref{
+  display:inline-block;
+  font-family:var(--mono);font-size:12.5px;
+  color:var(--text3);
+  margin-top:2px;
+}
+
+/* OK / NOK / NA buttons */
+.remark-row{
+  display:flex;gap:6px;margin-bottom:10px;
+}
+.rem-btn{
+  flex:1;
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  padding:9px 4px;
+  font-family:var(--font);
+  font-size:15px;font-weight:700;
+  letter-spacing:0.05em;
+  background:#fff;
+  color:var(--text3);
+  cursor:pointer;
+  transition:all 0.15s;
+  text-align:center;
+  -webkit-user-select:none;
+  touch-action:manipulation;
+}
+.rem-btn:active{transform:scale(0.95);}
+.rem-btn.active-ok{
+  background:var(--ok-bg);
+  border-color:var(--ok);
+  color:var(--ok);
+}
+.rem-btn.active-nok{
+  background:var(--nok-bg);
+  border-color:var(--nok);
+  color:var(--nok);
+}
+.rem-btn.active-na{
+  background:var(--na-bg);
+  border-color:#94A3B8;
+  color:#64748B;
+}
+
+/* Time/Date/Name/Sign row */
+.detail-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+.detail-field{display:flex;flex-direction:column;gap:3px;}
+.detail-field.full{grid-column:1/-1;}
+.d-label{font-size:11.2px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);}
+.d-input{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:7px;
+  padding:8px 10px;
+  font-family:var(--mono);
+  font-size:14.4px;
+  color:var(--text);
+  outline:none;
+  width:100%;
+  transition:border-color 0.15s;
+}
+.d-input:focus{border-color:var(--navy);background:#fff;}
+.d-input::placeholder{color:var(--text3);font-size:12.5px;}
+
+/* inline measure */
+.measure-block{
+  background:var(--bg);
+  border-radius:8px;
+  padding:10px 12px;
+  margin-bottom:10px;
+  display:flex;flex-direction:column;gap:7px;
+}
+.measure-row{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--text2);flex-wrap:wrap;}
+.m-inp{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:5px 8px;
+  font-family:var(--mono);
+  font-size:15px;
+  color:var(--text);
+  outline:none;
+  width:80px;
+}
+.m-inp:focus{border-color:var(--navy);}
+.unit{font-size:12.5px;color:var(--text3);font-family:var(--mono);}
+.fixed-val{font-family:var(--mono);font-size:15px;color:#E65100;font-weight:600;}
+.warn-box{
+  background:#FFF7ED;
+  border:1px solid #FED7AA;
+  border-radius:7px;
+  padding:8px 12px;
+  font-size:13.8px;
+  color:#C2410C;
+  margin-bottom:10px;
+}
+
+/* Layer checkboxes */
+.layer-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:6px;margin-bottom:10px;
+}
+.layer-chip{
+  border:1.5px solid var(--border);
+  border-radius:8px;
+  padding:8px 4px;
+  text-align:center;
+  cursor:pointer;
+  font-family:var(--mono);
+  font-size:13.8px;
+  font-weight:600;
+  color:var(--text3);
+  background:#fff;
+  transition:all 0.15s;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:manipulation;
+}
+.layer-chip:active{transform:scale(0.92);}
+.layer-chip.checked{
+  background:rgba(13,33,55,0.07);
+  border-color:var(--navy);
+  color:var(--navy);
+}
+.layer-chip input{display:none;}
+
+/* ── APPROVAL SECTION ── */
+.approval-card{
+  background:var(--card);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  margin-bottom:14px;
+  overflow:hidden;
+}
+.approval-card-header{
+  background:var(--navy);
+  padding:12px 16px;
+}
+.approval-card-header h2{font-size:16.2px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#fff;}
+.approval-blocks{padding:14px;display:flex;flex-direction:column;gap:14px;}
+.appr-block{
+  border:1.5px solid var(--border);
+  border-radius:var(--r2);
+  overflow:hidden;
+}
+.appr-block-title{
+  background:var(--bg);
+  padding:8px 14px;
+  font-size:13.8px;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--navy);
+  border-bottom:1px solid var(--border);
+}
+.appr-block-fields{padding:12px;display:flex;flex-direction:column;gap:8px;}
+.sig-pad{
+  height:52px;
+  border:1.5px dashed var(--border);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text3);
+  font-size:13.8px;
+  letter-spacing:0.05em;
+  margin-bottom:4px;
+  background:var(--bg);
+}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--navy);
+  z-index:200;
+  display:flex;
+  padding:0 8px;
+  padding-bottom:env(safe-area-inset-bottom);
+  box-shadow:0 -4px 20px rgba(0,0,0,0.25);
+  height:70px;
+  align-items:center;
+  gap:6px;
+}
+
+.nav-btn{
+  flex:1;
+  border:none;
+  border-radius:10px;
+  padding:8px 4px;
+  font-family:var(--font);
+  font-size:12.5px;font-weight:600;
+  letter-spacing:0.04em;text-transform:uppercase;
+  cursor:pointer;
+  transition:all 0.15s;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  touch-action:manipulation;
+}
+.nav-btn:active{transform:scale(0.93);}
+
+.nav-btn-icon{font-size:22.5px;}
+
+.btn-clear{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.55);}
+.btn-clear:active{background:rgba(255,255,255,0.14);}
+
+.btn-save{background:rgba(0,180,216,0.15);color:var(--cyan);}
+.btn-save:active{background:rgba(0,180,216,0.25);}
+
+.btn-submit{
+  background:var(--ok);
+  color:#fff;
+  flex:2;
+  font-size:15px;
+  box-shadow:0 0 0 0 rgba(22,163,74,0);
+  transition:box-shadow 0.3s,transform 0.15s;
+}
+.btn-submit:active{box-shadow:0 0 20px rgba(22,163,74,0.4);}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;
+  top:72px;left:14px;right:14px;
+  background:#1A1D23;
+  color:#fff;
+  border-radius:10px;
+  padding:13px 18px;
+  font-size:16.2px;font-weight:600;
+  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+  transform:translateY(-16px);
+  opacity:0;
+  transition:all 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events:none;
+  z-index:999;
+  display:flex;align-items:center;gap:10px;
+}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast-ok  {background:var(--ok);}
+.toast-nok {background:var(--nok);}
+.toast-info{background:var(--navy2);}
+
+
+
+
+/* ── PASTEL SECTION COLORS ── */
+/* Readiness - Soft Blue */
+.sec-readiness td                        { background:#DBEAFE; color:#1E3A5F; border-top:3px solid #93C5FD; }
+tr.sec-readiness + tr.data-row,
+tr.sec-readiness ~ tr.data-row:not(.sec-mould):not(.sec-foam):not(.sec-fabric):not(.sec-layup):not(.sec-vacuum):not(.sec-curing):not(.sec-demould) { background:#EFF6FF; }
+
+/* Mould - Soft Purple */
+.sec-mould td                            { background:#EDE9FE; color:#3B1F6B; border-top:3px solid #C4B5FD; }
+
+/* Foam - Soft Orange */
+.sec-foam td                             { background:#FFEDD5; color:#7C2D12; border-top:3px solid #FDBA74; }
+
+/* Fabric - Soft Green */
+.sec-fabric td                           { background:#DCFCE7; color:#14532D; border-top:3px solid #86EFAC; }
+
+/* Layup - Soft Indigo */
+.sec-layup td                            { background:#E0E7FF; color:#1E1B4B; border-top:3px solid #A5B4FC; }
+
+/* Vacuum - Soft Cyan */
+.sec-vacuum td                           { background:#CFFAFE; color:#164E63; border-top:3px solid #67E8F9; }
+
+/* Curing - Soft Red */
+.sec-curing td                           { background:#FFE4E6; color:#881337; border-top:3px solid #FCA5A5; }
+
+/* Demoulding - Soft Brown */
+.sec-demould td                          { background:#FEF3C7; color:#78350F; border-top:3px solid #FCD34D; }
+
+/* Data row tints per section group */
+.rows-readiness { background:#F0F7FF !important; }
+.rows-mould     { background:#F5F3FF !important; }
+.rows-foam      { background:#FFF7ED !important; }
+.rows-fabric    { background:#F0FDF4 !important; }
+.rows-layup     { background:#EEF2FF !important; }
+.rows-vacuum    { background:#ECFEFF !important; }
+.rows-curing    { background:#FFF1F2 !important; }
+.rows-demould   { background:#FFFBEB !important; }
+
+.rows-readiness:hover { background:#E0EFFE !important; }
+.rows-mould:hover     { background:#EDE9FE !important; }
+.rows-foam:hover      { background:#FFEDD5 !important; }
+.rows-fabric:hover    { background:#DCFCE7 !important; }
+.rows-layup:hover     { background:#E0E7FF !important; }
+.rows-vacuum:hover    { background:#CFFAFE !important; }
+.rows-curing:hover    { background:#FFE4E6 !important; }
+.rows-demould:hover   { background:#FEF3C7 !important; }
+
+
+/* ── MOBILE PASTEL SECTION COLORS ── */
+#sec-10-00 .section-header { background:#DBEAFE; }
+#sec-10-00 .section-title, #sec-10-00 .section-chevron svg { color:#1E3A5F !important; stroke:#1E3A5F !important; }
+#sec-10-00 .section-badge { background:rgba(30,58,95,0.1); color:#1E3A5F; }
+
+#sec-10-20 .section-header { background:#EDE9FE; }
+#sec-10-20 .section-title, #sec-10-20 .section-chevron svg { color:#3B1F6B !important; stroke:#3B1F6B !important; }
+#sec-10-20 .section-badge { background:rgba(59,31,107,0.1); color:#3B1F6B; }
+
+#sec-10-30 .section-header { background:#FFEDD5; }
+#sec-10-30 .section-title, #sec-10-30 .section-chevron svg { color:#7C2D12 !important; stroke:#7C2D12 !important; }
+#sec-10-30 .section-badge { background:rgba(124,45,18,0.1); color:#7C2D12; }
+
+#sec-10-40 .section-header { background:#DCFCE7; }
+#sec-10-40 .section-title, #sec-10-40 .section-chevron svg { color:#14532D !important; stroke:#14532D !important; }
+#sec-10-40 .section-badge { background:rgba(20,83,45,0.1); color:#14532D; }
+
+#sec-10-50 .section-header { background:#E0E7FF; }
+#sec-10-50 .section-title, #sec-10-50 .section-chevron svg { color:#1E1B4B !important; stroke:#1E1B4B !important; }
+#sec-10-50 .section-badge { background:rgba(30,27,75,0.1); color:#1E1B4B; }
+
+#sec-10-60 .section-header { background:#CFFAFE; }
+#sec-10-60 .section-title, #sec-10-60 .section-chevron svg { color:#164E63 !important; stroke:#164E63 !important; }
+#sec-10-60 .section-badge { background:rgba(22,78,99,0.1); color:#164E63; }
+
+#sec-10-70 .section-header { background:#FFE4E6; }
+#sec-10-70 .section-title, #sec-10-70 .section-chevron svg { color:#881337 !important; stroke:#881337 !important; }
+#sec-10-70 .section-badge { background:rgba(136,19,55,0.1); color:#881337; }
+
+#sec-10-80 .section-header { background:#FEF3C7; }
+#sec-10-80 .section-title, #sec-10-80 .section-chevron svg { color:#78350F !important; stroke:#78350F !important; }
+#sec-10-80 .section-badge { background:rgba(120,53,15,0.1); color:#78350F; }
+
+/* Matching check card tints */
+#sec-10-00 .check-card { border-left: 3px solid #93C5FD; background:#F0F7FF; }
+#sec-10-20 .check-card { border-left: 3px solid #C4B5FD; background:#F5F3FF; }
+#sec-10-30 .check-card { border-left: 3px solid #FDBA74; background:#FFF7ED; }
+#sec-10-40 .check-card { border-left: 3px solid #86EFAC; background:#F0FDF4; }
+#sec-10-50 .check-card { border-left: 3px solid #A5B4FC; background:#EEF2FF; }
+#sec-10-60 .check-card { border-left: 3px solid #67E8F9; background:#ECFEFF; }
+#sec-10-70 .check-card { border-left: 3px solid #FCA5A5; background:#FFF1F2; }
+#sec-10-80 .check-card { border-left: 3px solid #FCD34D; background:#FFFBEB; }
+
+/* Keep OK/NOK overrides stronger */
+#sec-10-00 .check-card.status-ok,
+#sec-10-20 .check-card.status-ok,
+#sec-10-30 .check-card.status-ok,
+#sec-10-40 .check-card.status-ok,
+#sec-10-50 .check-card.status-ok,
+#sec-10-60 .check-card.status-ok,
+#sec-10-70 .check-card.status-ok,
+#sec-10-80 .check-card.status-ok  { background:#DCFCE7 !important; border-left-color:#16A34A !important; }
+
+#sec-10-00 .check-card.status-nok,
+#sec-10-20 .check-card.status-nok,
+#sec-10-30 .check-card.status-nok,
+#sec-10-40 .check-card.status-nok,
+#sec-10-50 .check-card.status-nok,
+#sec-10-60 .check-card.status-nok,
+#sec-10-70 .check-card.status-nok,
+#sec-10-80 .check-card.status-nok { background:#FEE2E2 !important; border-left-color:#DC2626 !important; }
+
+</style>
+</head>
+<body>
+
+<!-- APP BAR -->
+<div class="app-bar">
+  <div class="app-bar-logo">
+    <img src="data:image/jpeg;base64,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Xe6fag70FzNN2/SYw0cu9+Jmb2rnaVg99R88nISt62YF7ms/Ps1At1GtugmPa9Bem6gouP8Am9mQB6yW5uKqr6FLCLsjZD1gexcEsU6iY1o4a1cogzAjScMp2TKv7+xAdqqLBlw8KSzLKnYi2s1woXruMi0xzLE9hkj/AGTKD88KzwRRNLmHUP8A0lZtKS94MMuSXDZyPXZPiiLn52xmXfDKu2VZzgfSiHyzSPzwoPDGiNLAs9akfyzCB+eFQQi9s0qCvoTG6si0GnTGfw4Unkling+PVBboxEa7bl7wZRtm0PtwYm/3Stp+eGNdMW82ggHfqXOG3GF7eCDDb6tQ1qozwIYd0XLBYfUw3KjtK1vV6epUXF7mxFeFaXcpzjA4updoVmjGTfDLHDLq+VBss0+levLn4THtvCqi5PnUMjYZ5A4O+Wq3Epp+qoJKp3M+db6Iu6C4yjhcfEuPBw3r8THXYfPMCU6mLuwn29wXi7lG1Y30apPLPlHhRjuUGxBr6Rfy9DE9yFPJqd/VhHUs2EG6sFfLmD6iKvowTDdHC9LqUZXv9EHWkqJUVb9JnDTw2r8TLfQfbnlLq/EvXtjn6i6SiTM+bJ9LEPk+JaeTg5CVr87gdzWeK0LGYN4oxzRwynRKInawKKOvSNHSRGavE+EeF6XUtT2HEADWKPJMVt/Uy1KU7lSXd6lMfl+JnDZwYYbdRuOtdmfng1QxbSiavnP6qf1U/qpbAh98vD3YqAA69TUAKlO9eKhdaH75/VT+qn9VHah5cPGt2P8AOv/aAAwDAQACAAMAAAAQ8888888888888888888888/088888888888qyyk48888888884hWCWI+888888888viCCmY88888888HWCGsWB3888888r7qzKXqDM8888887+OB/rmeK188887Sq6w8qbqPZ8888t6u2u8sHlyv8885eqSZ888sGGJe88gv2008888geUQ88puuE888884eO6V8c88M888888M88c888888888888888//EACgRAQAABQIGAgMBAQAAAAAAAAEAESExQRBxIFGBkcHRMGFAseGh8P/aAAgBAwEBPxD8WR6PtlAEzvRM1OU6/JYeHdwQ0mORg2NL8kLMIE5DzPZ8bt7V3NuxWDIY1w8NfJ1IWqYJnw2bBOK6angm0FZcjb+Pwoj6tfA8wQjG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" alt="ACPL Logo"/>
+  </div>
+  <div class="app-bar-titles">
+    <div class="app-bar-title">Absolute Composites</div>
+    <div class="app-bar-sub">In-Process Inspection Report</div>
+  </div>
+  <div class="app-bar-doc">
+    <span>DOC NO.</span>
+    <strong>QA-F-11</strong>
+  </div>
+</div>
+
+<!-- PROGRESS STRIP -->
+<div class="progress-strip">
+  <div class="prog-row">
+    <span class="prog-label">INSPECTION PROGRESS</span>
+    <span class="prog-pct" id="progPct">0%</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+  <div class="prog-chips">
+    <div class="prog-chip chip-ok">
+      <div class="prog-chip-num" id="okCount">0</div>
+      <div class="prog-chip-lbl">OK</div>
+    </div>
+    <div class="prog-chip chip-nok">
+      <div class="prog-chip-num" id="nokCount">0</div>
+      <div class="prog-chip-lbl">NOK</div>
+    </div>
+    <div class="prog-chip chip-pending">
+      <div class="prog-chip-num" id="pendCount">0</div>
+      <div class="prog-chip-lbl">PENDING</div>
+    </div>
+  </div>
+</div>
+
+<!-- FORM INFO -->
+<div class="section-wrap">
+
+  <div class="info-card">
+    <div class="info-card-header"><h2>📄 Report Details</h2></div>
+    <div class="info-fields">
+      <div class="info-field"><span class="i-label">Project Name</span><input class="i-input" id="projectName" type="text" value="H400" placeholder="Project Name"/></div>
+      <div class="info-field"><span class="i-label">Project No.</span><input class="i-input" id="projectNo" type="text" value="UVI-H40-004" placeholder="Project No."/></div>
+      <div class="info-field"><span class="i-label">Part No.</span><input class="i-input" id="partNo" type="text" value="DDR-401-189" placeholder="Part No."/></div>
+      <div class="info-field"><span class="i-label">Part Name</span><input class="i-input" id="partName" type="text" value="Left Wing Bottom Skin" placeholder="Part Name"/></div>
+      <div class="info-field"><span class="i-label">Route Card No.</span><input class="i-input" id="routeCard" type="text" value="DDR-401-189--RC" placeholder="Route Card No."/></div>
+      <div class="info-field"><span class="i-label">Part Sl. No.</span><input class="i-input" id="partSl" type="text" placeholder="Serial No."/></div>
+      <div class="info-field"><span class="i-label">Inspection Report No.</span><input class="i-input" id="inspNo" type="text" value="DDR-401-189--IP" placeholder="Report No."/></div>
+      <div class="info-field"><span class="i-label">Process Area</span><input class="i-input" id="processArea" type="text" value="Lamination" placeholder="Process Area"/></div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION: READINESS ═══ -->
+  <div class="section-card open" id="sec-10-00">
+    <div class="section-header" onclick="toggleSection('sec-10-00')">
+      <span class="section-emoji">📋</span>
+      <span class="section-title">Readiness for Project</span>
+      <span class="section-badge" id="badge-10-00">0/3</span>
+      <span class="section-chevron">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </span>
+    </div>
+    <div class="section-body">
+
+      <div class="check-card" id="check-0">
+        <span class="check-op">10-00</span>
+        <div class="check-text">Ensure all materials confirm to specifications</div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(0,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(0,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(0,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div>
+        </div>
+      </div>
+
+      <div class="check-card" id="check-1">
+        <span class="check-op">10-00</span>
+        <div class="check-text">Ensure all necessary fields are filled and approved by authorised person</div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(1,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(1,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(1,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div>
+        </div>
+      </div>
+
+      <div class="check-card" id="check-2">
+        <span class="check-op">10-00</span>
+        <div class="check-text">Ensure technician is aware about process</div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(2,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(2,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(2,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ SECTION: MOULD PREPARATION ═══ -->
+  <div class="section-card" id="sec-10-20">
+    <div class="section-header" onclick="toggleSection('sec-10-20')">
+      <span class="section-emoji">🔧</span>
+      <span class="section-title">Mould Preparation</span>
+      <span class="section-badge" id="badge-10-20">0/4</span>
+      <span class="section-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </div>
+    <div class="section-body">
+
+      <div class="check-card" id="check-3">
+        <span class="check-op">10-20</span>
+        <div class="check-text">Ensure correct mould is used. Left Wing Mould Bottom <span class="ref">(401-074-MB)</span></div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(3,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(3,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(3,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="401-074-MB"/></div>
+        </div>
+      </div>
+
+      <div class="check-card" id="check-4">
+        <span class="check-op">10-20</span>
+        <div class="check-text">No. of releases for Left Wing Mould Bottom (401-074-MB)</div>
+        <div class="measure-block">
+          <div class="measure-row"><span>No. of Releases:</span><input type="number" class="m-inp" placeholder="0" min="0"/> <span class="unit">Nos</span></div>
+        </div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(4,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(4,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(4,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="401-074-MB"/></div>
+        </div>
+      </div>
+
+      <div class="check-card" id="check-5">
+        <span class="check-op">10-20</span>
+        <div class="check-text">Ensure mould is free from FOD</div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(5,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(5,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(5,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div>
+        </div>
+      </div>
+
+      <div class="check-card" id="check-6">
+        <span class="check-op">10-20</span>
+        <div class="check-text">Ensure release agent is applied properly <span class="ref">(Refer WI#010 OP#10-20)</span></div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(6,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(6,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(6,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="WI#010 OP#10-20"/></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION: FOAM CUTTING ═══ -->
+  <div class="section-card" id="sec-10-30">
+    <div class="section-header" onclick="toggleSection('sec-10-30')">
+      <span class="section-emoji">✂️</span>
+      <span class="section-title">Foam Cutting</span>
+      <span class="section-badge" id="badge-10-30">0/4</span>
+      <span class="section-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </div>
+    <div class="section-body">
+      <div class="check-card" id="check-7">
+        <span class="check-op">10-30</span>
+        <div class="check-text">Ensure CNC program No. <strong>H4W FM</strong> is loaded in the CNC Machine</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(7,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(7,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(7,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="H4W FM"/></div></div>
+      </div>
+      <div class="check-card" id="check-8">
+        <span class="check-op">10-30</span>
+        <div class="check-text">Check for Wrinkles or folds in the foam before laying on the machines</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(8,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(8,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(8,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+      </div>
+      <div class="check-card" id="check-9">
+        <span class="check-op">10-30</span>
+        <div class="check-text">Check for damage in the foam before laying on the machines</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(9,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(9,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(9,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+      </div>
+      <div class="check-card" id="check-10">
+        <span class="check-op">10-30</span>
+        <div class="check-text">Check the size of foam as per Foam Drawing <span class="ref">DDR-401-189-FWC</span></div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(10,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(10,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(10,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189-FWC"/></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION: FABRIC CUTTING ═══ -->
+  <div class="section-card" id="sec-10-40">
+    <div class="section-header" onclick="toggleSection('sec-10-40')">
+      <span class="section-emoji">🧵</span>
+      <span class="section-title">Fabric Cutting</span>
+      <span class="section-badge" id="badge-10-40">0/4</span>
+      <span class="section-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </div>
+    <div class="section-body">
+      <div class="check-card" id="check-11">
+        <span class="check-op">10-40</span>
+        <div class="check-text">Ensure correct CNC program No. <strong>H4W K120, H4W G50, H4W G300 &amp; H4W C200</strong> is loaded in the TC Machine <span class="ref">(Check prog. No. in route card)</span></div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(11,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(11,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(11,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="Route Card"/></div></div>
+      </div>
+      <div class="check-card" id="check-12">
+        <span class="check-op">10-40</span>
+        <div class="check-text">Ensure prepreg is free of wrinkles and folds after applying bed vacuum</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(12,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(12,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(12,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+      </div>
+      <div class="check-card" id="check-13">
+        <span class="check-op">10-40</span>
+        <div class="check-text">Check for damage in the prepreg after laying on the machine bed</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(13,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(13,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(13,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+      </div>
+      <div class="check-card" id="check-14">
+        <span class="check-op">10-40</span>
+        <div class="check-text">Check the size of cut prepreg matches with ref template <span class="ref">(One sample per program)</span></div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(14,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(14,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(14,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Template Ref"/></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION: LAYUP PROCESS ═══ -->
+  <div class="section-card" id="sec-10-50">
+    <div class="section-header" onclick="toggleSection('sec-10-50')">
+      <span class="section-emoji">📐</span>
+      <span class="section-title">Layup Process</span>
+      <span class="section-badge" id="badge-10-50">0/9</span>
+      <span class="section-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </div>
+    <div class="section-body">
+      <div class="check-card" id="check-15">
+        <span class="check-op">10-50</span>
+        <div class="check-text">Ensure <strong>Layup Drawing DDR-401-189 Rev 0.2</strong> is used</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(15,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(15,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(15,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div></div>
+      </div>
+      <div class="check-card" id="check-16">
+        <span class="check-op">10-50</span>
+        <div class="check-text"><strong>Layer LWB1</strong> — Ensure presence and correctness of ply as per sequence</div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(16,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(16,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(16,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
+        </div>
+      </div>
+      <div class="check-card" id="check-24">
+        <span class="check-op">10-50</span>
+        <div class="check-text"><strong>Layer LWB2</strong> — Ensure presence and correctness of ply as per sequence</div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(24,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(24,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(24,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
+        </div>
+      </div>
+      <div class="check-card" id="check-25">
+        <span class="check-op">10-50</span>
+        <div class="check-text"><strong>Layer LWB3</strong> — Ensure presence and correctness of ply as per sequence</div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(25,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(25,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(25,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
+        </div>
+      </div>
+      <div class="check-card" id="check-26">
+        <span class="check-op">10-50</span>
+        <div class="check-text"><strong>Layer LWB4</strong> — Ensure presence and correctness of ply as per sequence</div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(26,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(26,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(26,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
+        </div>
+      </div>
+      <div class="check-card" id="check-27">
+        <span class="check-op">10-50</span>
+        <div class="check-text"><strong>Layer LWB5</strong> — Ensure presence and correctness of ply as per sequence</div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(27,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(27,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(27,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
+        </div>
+      </div>
+      <div class="check-card" id="check-28">
+        <span class="check-op">10-50</span>
+        <div class="check-text"><strong>Layer LWB6</strong> — Ensure presence and correctness of ply as per sequence</div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(28,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(28,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(28,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
+        </div>
+      </div>
+      <div class="check-card" id="check-29">
+        <span class="check-op">10-50</span>
+        <div class="check-text"><strong>Layer LWB7</strong> — Ensure presence and correctness of ply as per sequence</div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(29,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(29,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(29,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
+        </div>
+      </div>
+      <div class="check-card" id="check-30">
+        <span class="check-op">10-50</span>
+        <div class="check-text"><strong>Layer LWB8</strong> — Ensure presence and correctness of ply as per sequence</div>
+        <div class="remark-row">
+          <button class="rem-btn" onclick="setRemark(30,'OK',this)">✓ OK</button>
+          <button class="rem-btn" onclick="setRemark(30,'NOK',this)">✗ NOK</button>
+          <button class="rem-btn" onclick="setRemark(30,'NA',this)">— N/A</button>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div>
+          <div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div>
+          <div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div>
+        </div>
+      </div>
+
+      <div class="check-card" id="check-24">
+        <span class="check-op">10-50</span>
+        <div class="check-text">Butt line must be as per the Layup Drawing <span class="ref">DDR-401-189 Rev 0.2</span></div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(24,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(24,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(24,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" value="DDR-401-189 Rev 0.2"/></div></div>
+      </div>
+      <div class="check-card" id="check-25">
+        <span class="check-op">10-50</span>
+        <div class="check-text">Ensure the fabrics are properly pressed and no fold or wrinkles are found</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(25,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(25,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(25,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+      </div>
+      <div class="check-card" id="check-26">
+        <span class="check-op">10-50</span>
+        <div class="check-text">Check size of fabric is not extending beyond MEOP line</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(26,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(26,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(26,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION: VACUUM BAGGING ═══ -->
+  <div class="section-card" id="sec-10-60">
+    <div class="section-header" onclick="toggleSection('sec-10-60')">
+      <span class="section-emoji">🫙</span>
+      <span class="section-title">Vacuum Bagging</span>
+      <span class="section-badge" id="badge-10-60">0/4</span>
+      <span class="section-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </div>
+    <div class="section-body">
+      <div class="check-card" id="check-27">
+        <span class="check-op">10-60</span>
+        <div class="check-text">Ensure Perforated / Non-Perforated Release film is applied on the parts</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(27,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(27,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(27,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+      </div>
+      <div class="check-card" id="check-28">
+        <span class="check-op">10-60</span>
+        <div class="check-text">Ensure the Breather material is applied on parts</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(28,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(28,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(28,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+      </div>
+      <div class="check-card" id="check-29">
+        <span class="check-op">10-60</span>
+        <div class="check-text">Ensure the vacuum bagging film is applied on the parts</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(29,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(29,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(29,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+      </div>
+      <div class="check-card" id="check-30">
+        <span class="check-op">10-60</span>
+        <div class="check-text">Check the vacuum integrity</div>
+        <div class="measure-block">
+          <div class="measure-row"><span>Actual Vacuum Drop:</span><input type="number" class="m-inp" id="vacActual" placeholder="—"/><span class="unit">mmHG</span></div>
+          <div class="measure-row"><span>Maximum Vacuum:</span><span class="fixed-val">-640 mmHG</span></div>
+          <div class="measure-row"><span>Minimum Vacuum:</span><input type="number" class="m-inp" id="vacMin" placeholder="—"/><span class="unit">mmHG</span></div>
+        </div>
+        <div class="warn-box">⚠ Max allowed vacuum drop: <strong>37.5 mmHG</strong> for 10 minutes</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(30,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(30,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(30,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION: CURING ═══ -->
+  <div class="section-card" id="sec-10-70">
+    <div class="section-header" onclick="toggleSection('sec-10-70')">
+      <span class="section-emoji">🔥</span>
+      <span class="section-title">Curing</span>
+      <span class="section-badge" id="badge-10-70">0/1</span>
+      <span class="section-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </div>
+    <div class="section-body">
+      <div class="check-card" id="check-31">
+        <span class="check-op">10-70</span>
+        <div class="check-text">Curing time and temperature record</div>
+        <div class="measure-block">
+          <div class="measure-row"><span>Time In:</span><input type="time" class="m-inp" id="cureIn" style="width:110px"/></div>
+          <div class="measure-row"><span>Time Out:</span><input type="time" class="m-inp" id="cureOut" style="width:110px"/></div>
+          <div class="measure-row"><span>Temp Avg / Hour:</span><input type="number" class="m-inp" id="tempAvg" placeholder="—"/><span class="unit">°C</span></div>
+        </div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(31,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(31,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(31,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SECTION: DEMOULDING ═══ -->
+  <div class="section-card" id="sec-10-80">
+    <div class="section-header" onclick="toggleSection('sec-10-80')">
+      <span class="section-emoji">🏭</span>
+      <span class="section-title">Demoulding</span>
+      <span class="section-badge" id="badge-10-80">0/1</span>
+      <span class="section-chevron"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></span>
+    </div>
+    <div class="section-body">
+      <div class="check-card" id="check-32">
+        <span class="check-op">10-80</span>
+        <div class="check-text">Check technician is taking care while demoulding</div>
+        <div class="remark-row"><button class="rem-btn" onclick="setRemark(32,'OK',this)">✓ OK</button><button class="rem-btn" onclick="setRemark(32,'NOK',this)">✗ NOK</button><button class="rem-btn" onclick="setRemark(32,'NA',this)">— N/A</button></div>
+        <div class="detail-grid"><div class="detail-field"><span class="d-label">Time</span><input type="time" class="d-input"/></div><div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div><div class="detail-field"><span class="d-label">QE Name</span><input type="text" class="d-input" placeholder="Name"/></div><div class="detail-field"><span class="d-label">QE Sign</span><input type="text" class="d-input" placeholder="Sign"/></div><div class="detail-field full"><span class="d-label">Ref Drg / Instrument ID</span><input type="text" class="d-input" placeholder="Reference"/></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ APPROVAL ═══ -->
+  <div class="approval-card">
+    <div class="approval-card-header"><h2>✅ Approval &amp; Sign-off</h2></div>
+    <div class="approval-blocks">
+      <div class="appr-block">
+        <div class="appr-block-title">Prepared By</div>
+        <div class="appr-block-fields">
+          <div class="sig-pad">✍ Signature Area</div>
+          <div class="detail-field"><span class="d-label">Name</span><input type="text" class="d-input" placeholder="Full Name"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Designation</span><input type="text" class="d-input" placeholder="Designation"/></div>
+        </div>
+      </div>
+      <div class="appr-block">
+        <div class="appr-block-title">Reviewed By</div>
+        <div class="appr-block-fields">
+          <div class="sig-pad">✍ Signature Area</div>
+          <div class="detail-field"><span class="d-label">Name</span><input type="text" class="d-input" placeholder="Full Name"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Designation</span><input type="text" class="d-input" placeholder="Designation"/></div>
+        </div>
+      </div>
+      <div class="appr-block">
+        <div class="appr-block-title">Approved By</div>
+        <div class="appr-block-fields">
+          <div class="sig-pad">✍ Signature Area</div>
+          <div class="detail-field"><span class="d-label">Name</span><input type="text" class="d-input" placeholder="Full Name"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Designation</span><input type="text" class="d-input" placeholder="Designation"/></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /section-wrap -->
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-btn btn-clear" onclick="clearAll()">
+    <span class="nav-btn-icon">🗑</span>Clear
+  </button>
+  <button class="nav-btn btn-save" onclick="saveDraft()">
+    <span class="nav-btn-icon">💾</span>Save
+  </button>
+  <button class="nav-btn btn-submit" onclick="submitReport()">
+    <span class="nav-btn-icon">✅</span>Submit Report
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──────────────────────────────────────
+const TOTAL = 30;
+const remarks = new Array(TOTAL).fill('');
+const STORAGE_KEY = 'acpl_mobile_v1';
+
+// Section → check indices map
+const SECTIONS = {
+  'sec-10-00': { checks: [0,1,2],                          total: 3  },
+  'sec-10-20': { checks: [3,4,5,6],                        total: 4  },
+  'sec-10-30': { checks: [7,8,9,10],                       total: 4  },
+  'sec-10-40': { checks: [11,12,13,14],                    total: 4  },
+  'sec-10-50': { checks: [15,16,17,18,19,20,21,22,23],     total: 9  },
+  'sec-10-60': { checks: [24,25,26,27],                    total: 4  },
+  'sec-10-70': { checks: [28],                             total: 1  },
+  'sec-10-80': { checks: [29],                             total: 1  },
+};
+
+// ── TOAST ──────────────────────────────────────
+let toastTimer;
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' toast-'+type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── SECTION TOGGLE ─────────────────────────────
+function toggleSection(id) {
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+// ── REMARK BUTTONS ─────────────────────────────
+function setRemark(idx, val, btn) {
+  remarks[idx] = val;
+  const card = document.getElementById('check-' + idx);
+  const btns = card.querySelectorAll('.rem-btn');
+
+  btns.forEach(b => b.classList.remove('active-ok','active-nok','active-na'));
+  if (val === 'OK')  btn.classList.add('active-ok');
+  if (val === 'NOK') btn.classList.add('active-nok');
+  if (val === 'NA')  btn.classList.add('active-na');
+
+  card.classList.remove('status-ok','status-nok','status-na');
+  if (val === 'OK')  card.classList.add('status-ok');
+  if (val === 'NOK') card.classList.add('status-nok');
+  if (val === 'NA')  card.classList.add('status-na');
+
+  updateProgress();
+  updateBadges();
+  saveDraft(true);
+
+  if (val === 'NOK') showToast('⚠ NOK marked — please note the issue', 'nok');
+}
+
+// ── LAYER CHIPS ────────────────────────────────
+function toggleLayer(label) {
+  const cb = label.querySelector('input[type="checkbox"]');
+  // Let the default checkbox toggle happen, then update style
+  setTimeout(() => {
+    if (cb.checked) label.classList.add('checked');
+    else label.classList.remove('checked');
+  }, 0);
+}
+
+// ── PROGRESS ───────────────────────────────────
+function updateProgress() {
+  const done    = remarks.filter(r => r !== '').length;
+  const okCnt   = remarks.filter(r => r === 'OK').length;
+  const nokCnt  = remarks.filter(r => r === 'NOK').length;
+  const pct     = Math.round((done / TOTAL) * 100);
+
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progPct').textContent   = pct + '%';
+  document.getElementById('okCount').textContent    = okCnt;
+  document.getElementById('nokCount').textContent   = nokCnt;
+  document.getElementById('pendCount').textContent  = TOTAL - done;
+}
+
+// ── SECTION BADGES ─────────────────────────────
+function updateBadges() {
+  Object.entries(SECTIONS).forEach(([secId, info]) => {
+    const done  = info.checks.filter(i => remarks[i] !== '').length;
+    const badge = document.getElementById('badge-' + secId.replace('sec-',''));
+    if (!badge) return;
+    badge.textContent = done + '/' + info.total;
+    badge.classList.toggle('all-done', done === info.total);
+  });
+}
+
+// ── SAVE ───────────────────────────────────────
+function saveDraft(silent=false) {
+  try {
+    const state = {
+      remarks,
+      savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    if (!silent) showToast('💾 Draft saved!', 'info');
+  } catch(e) { console.warn('Save failed', e); }
+}
+
+// ── LOAD ───────────────────────────────────────
+function loadDraft() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const state = JSON.parse(raw);
+    if (state.remarks) {
+      state.remarks.forEach((val, idx) => {
+        if (!val) return;
+        remarks[idx] = val;
+        const card = document.getElementById('check-' + idx);
+        if (!card) return;
+        const btns = card.querySelectorAll('.rem-btn');
+        btns.forEach(b => b.classList.remove('active-ok','active-nok','active-na'));
+        if (val === 'OK')  { btns[0]?.classList.add('active-ok');  card.classList.add('status-ok');  }
+        if (val === 'NOK') { btns[1]?.classList.add('active-nok'); card.classList.add('status-nok'); }
+        if (val === 'NA')  { btns[2]?.classList.add('active-na');  card.classList.add('status-na');  }
+      });
+      updateProgress();
+      updateBadges();
+      const d = new Date(state.savedAt);
+      showToast('📂 Draft restored (' + d.toLocaleTimeString() + ')', 'info');
+    }
+  } catch(e) { console.warn('Load failed', e); }
+}
+
+// ── CLEAR ──────────────────────────────────────
+function clearAll() {
+  if (!confirm('Clear all inspection data?')) return;
+  remarks.fill('');
+  document.querySelectorAll('.rem-btn').forEach(b =>
+    b.classList.remove('active-ok','active-nok','active-na')
+  );
+  document.querySelectorAll('.check-card').forEach(c =>
+    c.classList.remove('status-ok','status-nok','status-na')
+  );
+  document.querySelectorAll('.d-input, .m-inp').forEach(i => {
+    const presets = ['H4W FM','DDR-401-189-FWC','DDR-401-189 Rev 0.2','401-074-MB','WI#010 OP#10-20','Route Card'];
+    if (!presets.includes(i.value)) i.value = '';
+  });
+  document.querySelectorAll('.layer-chip').forEach(l => {
+    l.classList.remove('checked');
+    const cb = l.querySelector('input');
+    if (cb) cb.checked = false;
+  });
+  localStorage.removeItem(STORAGE_KEY);
+  updateProgress();
+  updateBadges();
+  showToast('🗑 Cleared');
+}
+
+// ── SUBMIT ─────────────────────────────────────
+function submitReport() {
+  const pending = remarks.filter(r => r === '').length;
+  const nok     = remarks.filter(r => r === 'NOK').length;
+  let msg = '';
+  if (pending > 0) msg += pending + ' check(s) still pending.\n';
+  if (nok > 0)     msg += nok + ' NOK item(s) found.\n';
+  if (msg && !confirm(msg + '\nSubmit anyway?')) return;
+  saveDraft(true);
+  showToast('✅ Report submitted successfully!', 'ok');
+}
+
+// ── VACUUM VALIDATION ──────────────────────────
+document.getElementById('vacActual')?.addEventListener('input', function() {
+  const v = parseFloat(this.value);
+  if (!isNaN(v) && v > 37.5) {
+    this.style.borderColor = 'var(--nok)';
+    this.style.color = 'var(--nok)';
+    showToast('⚠ Vacuum drop exceeds 37.5 mmHG limit!', 'nok');
+  } else {
+    this.style.borderColor = '';
+    this.style.color = '';
+  }
+});
+
+// ── INIT ───────────────────────────────────────
+updateProgress();
+updateBadges();
+loadDraft();
+</script>
+</body>
+</html>
