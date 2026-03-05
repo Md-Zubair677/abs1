@@ -1088,26 +1088,6 @@ body.cover-open{overflow:hidden;}
         </div>
       </div>
       <div class="appr-block">
-        <div class="appr-block-title">Reviewed By</div>
-        <div class="appr-block-fields">
-                    <div class="sig-upload-wrap" id="sigWrap501" style="margin-bottom:14px;">
-        <label class="sig-upload-label" for="sigFile501" style="min-height:60px;flex-direction:column;gap:4px;">
-          <span class="sig-upload-icon">✍️</span>
-          <span class="sig-upload-text">Upload Signature / Photo / PDF</span>
-        </label>
-        <input class="sig-upload-input" type="file" id="sigFile501" accept="image/*,.pdf" onchange="handleSigUpload(this,501)"/>
-        <div class="sig-preview" id="sigPreview501">
-          <button class="sig-clear-btn" onclick="clearSig(501)" title="Remove">✕</button>
-          <img id="sigImg501" src="" alt="Signature" style="display:none;max-height:60px;"/>
-          <span class="sig-pdf-name" id="sigPdf501" style="display:none"></span>
-        </div>
-      </div>
-          <div class="detail-field"><span class="d-label">Name</span><input type="text" class="d-input" value="Shreeshail H" placeholder="Full Name"/></div>
-          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
-          <div class="detail-field"><span class="d-label">Designation</span><input type="text" class="d-input" value="Manager" placeholder="Designation"/></div>
-        </div>
-      </div>
-      <div class="appr-block">
         <div class="appr-block-title">Approved By</div>
         <div class="appr-block-fields">
                     <div class="sig-upload-wrap" id="sigWrap502" style="margin-bottom:14px;">
@@ -1127,6 +1107,26 @@ body.cover-open{overflow:hidden;}
           <div class="detail-field"><span class="d-label">Designation</span><input type="text" class="d-input" placeholder="Designation"/></div>
         </div>
       </div>
+      <div class="appr-block">
+        <div class="appr-block-title">Reviewed By</div>
+        <div class="appr-block-fields">
+                    <div class="sig-upload-wrap" id="sigWrap501" style="margin-bottom:14px;">
+        <label class="sig-upload-label" for="sigFile501" style="min-height:60px;flex-direction:column;gap:4px;">
+          <span class="sig-upload-icon">✍️</span>
+          <span class="sig-upload-text">Upload Signature / Photo / PDF</span>
+        </label>
+        <input class="sig-upload-input" type="file" id="sigFile501" accept="image/*,.pdf" onchange="handleSigUpload(this,501)"/>
+        <div class="sig-preview" id="sigPreview501">
+          <button class="sig-clear-btn" onclick="clearSig(501)" title="Remove">✕</button>
+          <img id="sigImg501" src="" alt="Signature" style="display:none;max-height:60px;"/>
+          <span class="sig-pdf-name" id="sigPdf501" style="display:none"></span>
+        </div>
+      </div>
+          <div class="detail-field"><span class="d-label">Name</span><input type="text" class="d-input" value="Shreeshail H" placeholder="Full Name"/></div>
+          <div class="detail-field"><span class="d-label">Date</span><input type="date" class="d-input"/></div>
+          <div class="detail-field"><span class="d-label">Designation</span><input type="text" class="d-input" value="Manager" placeholder="Designation"/></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1140,7 +1140,7 @@ body.cover-open{overflow:hidden;}
 
 <script>
 const TOTAL = 33;
-const remarks = new Array(TOTAL).fill('');
+const remarks = new Array(34).fill('');
 const STORAGE_KEY = 'acpl_mobile_v2';
 const SECTIONS = {
   'sec-10-00': { checks:[0,1,2], total:3 },
@@ -1187,9 +1187,10 @@ function setMobRem(idx,val,btn) {
 function setRemark(idx,val,btn){ setMobRem(idx,val,btn); }
 
 function updateProgress() {
-  const done=remarks.filter(r=>r!=='').length;
-  const okCnt=remarks.filter(r=>r==='OK').length;
-  const nokCnt=remarks.filter(r=>r==='NOK').length;
+  const VALID_IDX=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33];
+  const done=VALID_IDX.filter(i=>remarks[i]!=='').length;
+  const okCnt=VALID_IDX.filter(i=>remarks[i]==='OK').length;
+  const nokCnt=VALID_IDX.filter(i=>remarks[i]==='NOK').length;
   const pct=Math.round((done/TOTAL)*100);
   document.getElementById('progFill').style.width=pct+'%';
   document.getElementById('progPct').textContent=pct+'%';
